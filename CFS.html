@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CENTRE FOR EYE SIGHT - Inquiry</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+        .popup input, .popup textarea {
+            width: 100%;
+            margin: 5px 0;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .popup label {
+            display: block;
+            text-align: left;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .popup button {
+            background-color: #28a745;
+        }
+        .popup button.close {
+            background-color: #dc3545;
+        }
+        .contact-message {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #28a745;
+        }
+        #medicineField {
+            display: none; /* Hidden initially */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>CENTRE FOR EYE SIGHT</h2>
+        <p>1A, Acharya Jagdish Chandra Bose Rd, Elgin, Kolkata, West Bengal 700020</p>
+        <p>Thank you for visiting our hospital.</p>
+        
+        <select id="language" onchange="changeLanguage()">
+            <option value="en">English</option>
+            <option value="bn">বাংলা</option>
+            <option value="hi">हिन्दी</option>
+        </select>
+
+        <button onclick="openPopup('Redness of eye')">Redness of Eye</button>
+        <button onclick="openPopup('Pain in eye')">Pain in Eye</button>
+        <button onclick="openPopup('Watery Eyes with Irritation')">Watery Eyes with Irritation</button>
+        <button onclick="openPopup('Medicine related query')">Medicine Related Query</button>
+        <button onclick="openPopup('Follow up related query')">Follow Up Query</button>
+    </div>
+
+    <div id="popup" class="popup">
+        <h3 id="popup-title"></h3>
+        <input type="text" id="name" placeholder="Your Name" required>
+        <input type="text" id="doctorName" placeholder="Name of Doctor You Consulted" required>
+        <input type="text" id="address" placeholder="Your Address" required>
+        <input type="tel" id="contact" placeholder="Your Contact Number" required>
+        
+        <label for="lastVisit">Last date you visited our hospital (optional):</label>
+        <input type="date" id="lastVisit">
+        
+        <div id="medicineField">
+            <label for="medicineName">Medicine Name:</label>
+            <input type="text" id="medicineName" placeholder="Enter Medicine Name">
+        </div>
+
+        <textarea id="concern" placeholder="Describe your concern..." rows="4"></textarea>
+        <button onclick="sendToWhatsApp()">Submit</button>
+        <button class="close" onclick="closePopup()">Close</button>
+        
+        <p class="contact-message">Our concern team will contact you as soon as possible.</p>
+    </div>
+
+    <script>
+        let selectedIssue = "";
+
+        function openPopup(issue) {
+            selectedIssue = issue;
+            document.getElementById("popup-title").innerText = issue;
+            document.getElementById("popup").style.display = "block";
+            
+            // Show the Medicine Name field only for "Medicine Related Query"
+            if (issue === "Medicine related query") {
+                document.getElementById("medicineField").style.display = "block";
+            } else {
+                document.getElementById("medicineField").style.display = "none";
+            }
+        }
+
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+
+        function sendToWhatsApp() {
+            let name = document.getElementById("name").value;
+            let doctorName = document.getElementById("doctorName").value;
+            let address = document.getElementById("address").value;
+            let contact = document.getElementById("contact").value;
+            let lastVisit = document.getElementById("lastVisit").value;
+            let concern = document.getElementById("concern").value;
+            let medicineName = document.getElementById("medicineName").value;
+
+            if (name && doctorName && address && contact && concern) {
+                let message = `Patient Inquiry:\n\nIssue: ${selectedIssue}\nName: ${name}\nDoctor Consulted: ${doctorName}\nAddress: ${address}\nContact: ${contact}`;
+                
+                if (lastVisit) {
+                    message += `\nLast Visited: ${lastVisit}`;
+                }
+                
+                if (selectedIssue === "Medicine related query" && medicineName) {
+                    message += `\nMedicine Name: ${medicineName}`;
+                }
+
+                message += `\nConcern: ${concern}`;
+                
+                let whatsappURL = `https://wa.me/9564000491?text=${encodeURIComponent(message)}`;
+                window.open(whatsappURL, '_blank');
+                closePopup();
+            } else {
+                alert("Please fill in all the required fields.");
+            }
+        }
+
+        function changeLanguage() {
+            let lang = document.getElementById("language").value;
+            let buttons = document.querySelectorAll("button");
+
+            if (lang === "bn") {
+                buttons[0].innerText = "চোখ লাল হয়ে যাওয়া";
+                buttons[1].innerText = "চোখে ব্যথা";
+                buttons[2].innerText = "চোখ দিয়ে জল কাটা";
+                buttons[3].innerText = "ওষুধ সংক্রান্ত প্রশ্ন";
+                buttons[4].innerText = "ফলোআপ সংক্রান্ত প্রশ্ন";
+            } else if (lang === "hi") {
+                buttons[0].innerText = "आंख लाल होना";
+                buttons[1].innerText = "आंख में दर्द";
+                buttons[2].innerText = "आंखों से पानी आना";
+                buttons[3].innerText = "दवा संबंधित प्रश्न";
+                buttons[4].innerText = "फॉलो-अप संबंधित प्रश्न";
+            } else {
+                buttons[0].innerText = "Redness of Eye";
+                buttons[1].innerText = "Pain in Eye";
+                buttons[2].innerText = "Watery Eyes with Irritation";
+                buttons[3].innerText = "Medicine Related Query";
+                buttons[4].innerText = "Follow Up Query";
+            }
+        }
+    </script>
+
+</body>
+</html>
